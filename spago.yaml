@@ -1,0 +1,10 @@
+package:
+  name: node-event-emitter
+  dependencies:
+    - effect
+    - maybe
+    - options
+    - prelude
+workspace:
+  package_set:
+    registry: 46.0.0
