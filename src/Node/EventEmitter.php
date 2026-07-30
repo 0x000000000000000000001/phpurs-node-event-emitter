@@ -59,15 +59,11 @@ $exports['eventNamesImpl'] = function($emitter) {
     return [];
 };
 
-$exports['symbolOrStr'] = function($left) {
-    return function($right) {
-        return function($sym) use ($left, $right) {
-            if (is_string($sym) && strpos($sym, "Symbol(") === 0) {
-                return $left($sym);
-            }
-            return $right($sym);
-        };
-    };
+$exports['symbolOrStr'] = function($left, $right, $sym) {
+    if (is_string($sym) && strpos($sym, "Symbol(") === 0) {
+        return $left($sym);
+    }
+    return $right($sym);
 };
 
 $exports['getMaxListenersImpl'] = function($emitter) {
