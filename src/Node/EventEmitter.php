@@ -6,18 +6,32 @@ $exports['new'] = function() {
     return new class {
         public $listeners = [];
         public $maxListeners = 10;
+        public $onceWrappers = [];
         public function on($event, $cb) { $this->listeners[$event][] = $cb; return $this; }
         public function once($event, $cb) {
             $wrapper = function(...$args) use ($event, $cb, &$wrapper) {
                 $this->off($event, $wrapper);
                 $cb(...$args);
             };
+            $this->onceWrappers[spl_object_id($wrapper)] = $cb;
             $this->on($event, $wrapper);
             return $this;
         }
         public function off($event, $cb) {
             if (isset($this->listeners[$event])) {
-                $this->listeners[$event] = array_filter($this->listeners[$event], function($l) use ($cb) { return $l !== $cb; });
+                $self = $this;
+                $this->listeners[$event] = array_values(array_filter($this->listeners[$event], function($l) use ($cb, $self) {
+                    if ($l === $cb) {
+                        if (is_object($l) && isset($self->onceWrappers[spl_object_id($l)])) { unset($self->onceWrappers[spl_object_id($l)]); }
+                        return false;
+                    }
+                    $id = is_object($l) ? spl_object_id($l) : null;
+                    if ($id !== null && isset($self->onceWrappers[$id]) && $self->onceWrappers[$id] === $cb) {
+                        unset($self->onceWrappers[$id]);
+                        return false;
+                    }
+                    return true;
+                }));
             }
             return $this;
         }
@@ -40,6 +54,7 @@ $exports['new'] = function() {
                 $this->off($event, $wrapper);
                 $cb(...$args);
             };
+            $this->onceWrappers[spl_object_id($wrapper)] = $cb;
             $this->prependListener($event, $wrapper);
             return $this;
         }

@@ -3,12 +3,14 @@ package:
   dependencies:
     - effect
     - maybe
+    - nullable
     - options
     - prelude
 
   test:
     main: Test.Main
     dependencies:
+      - aff
       - assert
       - console
       - effect
@@ -22,6 +24,7 @@ package:
       - maybe
       - prelude
       - refs
+      - spec
       - tailrec
 
 workspace:

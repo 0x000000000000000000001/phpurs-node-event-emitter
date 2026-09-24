@@ -1,0 +1,6 @@
+{
+    "name": "phpurs/node-event-emitter",
+    "require": {
+        "revolt/event-loop": "^1.0"
+    }
+}
