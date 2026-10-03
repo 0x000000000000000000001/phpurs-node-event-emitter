@@ -3,6 +3,7 @@
 /.pulp-cache/
 output/
 output.bak/
+/.purmeta/
 /generated-docs/
 /.psc-package/
 /.psc*
